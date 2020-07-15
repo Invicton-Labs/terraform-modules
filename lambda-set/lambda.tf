@@ -46,10 +46,10 @@ resource "aws_lambda_function" "function" {
 
 // For each service that should be able to execute this function, add a permission to do so
 resource "aws_lambda_permission" "allow_execution" {
-  count         = var.create ? length(var.execution-services) : 0
+  count         = var.create ? length(var.execution_services) : 0
   statement_id  = "AllowExecutionFromService-${count.index}"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.function[0].function_name
-  principal     = var.execution-services[count.index].service
-  source_arn    = var.execution-services[count.index].arn
+  principal     = var.execution_services[count.index].service
+  source_arn    = var.execution_services[count.index].arn
 }

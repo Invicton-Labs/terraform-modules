@@ -62,7 +62,7 @@ EOF
 
 // Attach any policies provided as arguments
 resource "aws_iam_role_policy_attachment" "role_policy_attachment" {
-  count      = var.create ? length(var.role-policy-arns) : 0
+  count      = var.create ? length(var.role_policy_arns) : 0
   role       = aws_iam_role.lambda_role[0].id
-  policy_arn = var.role-policy-arns[count.index]
+  policy_arn = var.role_policy_arns[count.index]
 }

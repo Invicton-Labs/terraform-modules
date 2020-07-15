@@ -46,7 +46,7 @@ variable "archive" {
   }
 }
 // Any policies to attach to the role that this Lambda runs as
-variable "role-policy-arns" {
+variable "role_policy_arns" {
   type    = list(string)
   default = []
 }
@@ -57,7 +57,7 @@ variable "cloudwatch_retention_days" {
 }
 // An optional list of service/arn pairs that should be allowed to invoke this Lambda.
 // The service value is required, the arn can be 'null' to allow everything from that service.
-variable "execution-services" {
+variable "execution_services" {
   type = list(object({
     service = string
     arn     = string
@@ -78,7 +78,7 @@ variable "environment" {
   default = {}
 }
 // The schedule to run this Lambda on (uses CloudWatch Events schedule notation). If not provided, the Lambda will not run on a schedule
-variable "schedule" {
+variable "schedules" {
   type    = list(string)
   default = []
 }
