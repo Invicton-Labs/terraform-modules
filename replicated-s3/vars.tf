@@ -5,7 +5,16 @@ variable "secondary_region" {
   type = string
 }
 variable "provider_profile" {
-  type = string
+  type    = string
+  default = null
+}
+variable "provider_access_key_id" {
+  type    = string
+  default = null
+}
+variable "provider_access_key_secret" {
+  type    = string
+  default = null
 }
 variable "provider_role_to_assume" {
   type    = string

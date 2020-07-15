@@ -2,6 +2,8 @@ provider "aws" {
   alias       = "primary"
   region      = var.primary_region
   profile     = var.provider_profile
+  access_key  = var.provider_profile != null ? null : var.provider_access_key_id
+  secret_key  = var.provider_profile != null ? null : var.provider_access_key_secret
   max_retries = 10
 
   dynamic "assume_role" {
@@ -16,6 +18,8 @@ provider "aws" {
   alias       = "secondary"
   region      = var.secondary_region
   profile     = var.provider_profile
+  access_key  = var.provider_profile != null ? null : var.provider_access_key_id
+  secret_key  = var.provider_profile != null ? null : var.provider_access_key_secret
   max_retries = 10
 
   dynamic "assume_role" {
