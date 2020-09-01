@@ -1,8 +1,8 @@
 output "lambda" {
-  value = var.create ? aws_lambda_function.function[0] : null
+  value = aws_lambda_function.function
 }
 output "log_group" {
-  value = var.create ? module.logging.log_group : null
+  value = module.logging.log_group
 }
 
 // A flag for determining when everything in this module has been created
@@ -15,7 +15,8 @@ output "complete" {
     aws_lambda_function.function,
     aws_lambda_permission.allow_execution,
     aws_lambda_permission.allow_schedule,
-    ws_cloudwatch_event_target.lambda
+    aws_cloudwatch_event_target.lambda,
+    aws_lambda_function_event_invoke_config.config
   ]
   value = true
 }

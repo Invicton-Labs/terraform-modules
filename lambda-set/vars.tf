@@ -22,10 +22,15 @@ variable "timeout" {
 variable "edge" {
   type = bool
 }
-// Whether to create this Lambda function (used for optional modules that may or may not exist depending on other resources/settings)
-variable "create" {
-  type    = bool
-  default = true
+// Async config
+variable "maximum_event_age_in_seconds" {
+  type    = number
+  default = 21600
+}
+// Async config
+variable "maximum_retry_attempts" {
+  type    = number
+  default = 2
 }
 // The directory that contains all files that must be bundled into the Lambda archive for upload
 // Either this or the "archive" variable must be provided.
@@ -84,8 +89,8 @@ variable "schedules" {
 }
 
 locals {
-  archive = var.create ? (var.archive.output_path != "" ? var.archive : {
+  archive = var.archive.output_path != "" ? var.archive : {
     output_path         = data.archive_file.archive[0].output_path
     output_base64sha256 = data.archive_file.archive[0].output_base64sha256
-  }) : null
+  }
 }

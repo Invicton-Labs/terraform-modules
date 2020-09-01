@@ -1,14 +1,13 @@
 // Create the Cloudwatch log group
 module "logging" {
   source         = "../log-group"
-  create         = var.create
   name           = "/aws/lambda/${var.edge ? "us-east-1." : ""}${var.name}"
   retention_days = var.cloudwatch_retention_days
 }
 
 // Create the ZIP file for the Lambda
 data "archive_file" "archive" {
-  count       = var.create && var.archive.output_path == "" ? 1 : 0
+  count       = var.archive.output_path == "" ? 1 : 0
   type        = "zip"
   source_dir  = var.directory
   output_path = "${var.directory}.zip"
@@ -16,11 +15,10 @@ data "archive_file" "archive" {
 
 // Create the actual function
 resource "aws_lambda_function" "function" {
-  count            = var.create ? 1 : 0
   depends_on       = [module.logging.complete]
   filename         = local.archive.output_path
   function_name    = var.name
-  role             = aws_iam_role.lambda_role[0].arn
+  role             = aws_iam_role.lambda_role.arn
   handler          = var.handler
   source_code_hash = local.archive.output_base64sha256
   runtime          = var.runtime
@@ -44,12 +42,19 @@ resource "aws_lambda_function" "function" {
   }
 }
 
+// Configure async call config
+resource "aws_lambda_function_event_invoke_config" "config" {
+  function_name                = aws_lambda_function.function.function_name
+  maximum_event_age_in_seconds = var.maximum_event_age_in_seconds
+  maximum_retry_attempts       = var.maximum_retry_attempts
+}
+
 // For each service that should be able to execute this function, add a permission to do so
 resource "aws_lambda_permission" "allow_execution" {
-  count         = var.create ? length(var.execution_services) : 0
+  count         = length(var.execution_services)
   statement_id  = "AllowExecutionFromService-${count.index}"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.function[0].function_name
+  function_name = aws_lambda_function.function.function_name
   principal     = var.execution_services[count.index].service
   source_arn    = var.execution_services[count.index].arn
 }
