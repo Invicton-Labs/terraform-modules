@@ -32,14 +32,20 @@ variable "maximum_retry_attempts" {
   type    = number
   default = 2
 }
+// The sourcefile to zip and upload.
+// Either this, the "sourcefile" variable, or the "archive" variable must be provided.
+variable "sourcefile" {
+  type    = string
+  default = null
+}
 // The directory that contains all files that must be bundled into the Lambda archive for upload
-// Either this or the "archive" variable must be provided.
+// Either this, the "sourcefile" variable, or the "archive" variable must be provided.
 variable "directory" {
   type    = string
   default = null
 }
 // The data.archive_file object that is the archive to upload
-// Either this or the "directory" variable must be provided.
+// Either this, the "sourcefile" variable, or the "directory" variable must be provided.
 variable "archive" {
   type = object({
     output_path         = string
@@ -49,6 +55,10 @@ variable "archive" {
     output_path         = ""
     output_base64sha256 = ""
   }
+}
+variable "iam_role_arn" {
+  type    = any
+  default = null
 }
 // Any policies to attach to the role that this Lambda runs as
 variable "role_policy_arns" {
@@ -87,10 +97,37 @@ variable "schedules" {
   type    = list(string)
   default = []
 }
+// ARN of the lambda function to subscribe logs to
+variable "logs_subscription_lambda_arn" {
+  type    = string
+  default = null
+}
+// Name of the lambda subscription
+variable "logs_subscription_name" {
+  type    = string
+  default = "Lambda Subscription"
+}
+// Filter to use for the lambda subscription
+variable "logs_subscription_filter" {
+  type    = string
+  default = ""
+}
+// Whether to apply a Lambda Permission for the log group to invoke the subscription Lambda
+variable "logs_apply_subscription_permission" {
+  type    = bool
+  default = true
+}
+// The concurrency limit
+variable "reserved_concurrent_executions" {
+  type    = number
+  default = null
+}
+
 
 locals {
   archive = var.archive.output_path != "" ? var.archive : {
     output_path         = data.archive_file.archive[0].output_path
     output_base64sha256 = data.archive_file.archive[0].output_base64sha256
   }
+  iam_role_arn = var.iam_role_arn == null ? aws_iam_role.lambda_role[0].arn : var.iam_role_arn
 }

@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "logging" {
     ]
   }
 }
-//arn:aws:logs:ca-central-1:370471889523:log-group:/aws/lambda/process-update:log-stream:test
+
 resource "aws_cloudwatch_log_subscription_filter" "subscription" {
   count           = var.subscription_lambda_arn != null ? 1 : 0
   name            = var.subscription_name
@@ -25,7 +25,7 @@ resource "aws_cloudwatch_log_subscription_filter" "subscription" {
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch" {
-  count         = var.subscription_lambda_arn != null ? 1 : 0
+  count         = var.subscription_lambda_arn != null && var.apply_subscription_permission ? 1 : 0
   action        = "lambda:InvokeFunction"
   function_name = var.subscription_lambda_arn
   principal     = "logs.amazonaws.com"

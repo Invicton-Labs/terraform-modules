@@ -21,3 +21,8 @@ variable "subscription_filter" {
   type    = string
   default = ""
 }
+
+variable "apply_subscription_permission" {
+  type    = bool
+  default = true
+}

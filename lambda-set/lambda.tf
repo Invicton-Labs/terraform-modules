@@ -1,30 +1,38 @@
 // Create the Cloudwatch log group
 module "logging" {
-  source         = "../log-group"
-  name           = "/aws/lambda/${var.edge ? "us-east-1." : ""}${var.name}"
-  retention_days = var.cloudwatch_retention_days
+  source                        = "../log-group"
+  name                          = "/aws/lambda/${var.edge ? "us-east-1." : ""}${var.name}"
+  retention_days                = var.cloudwatch_retention_days
+  subscription_lambda_arn       = var.logs_subscription_lambda_arn
+  subscription_name             = var.logs_subscription_name
+  subscription_filter           = var.logs_subscription_filter
+  apply_subscription_permission = var.logs_apply_subscription_permission
 }
 
 // Create the ZIP file for the Lambda
 data "archive_file" "archive" {
-  count       = var.archive.output_path == "" ? 1 : 0
-  type        = "zip"
-  source_dir  = var.directory
-  output_path = "${var.directory}.zip"
+  count = var.archive.output_path == "" ? 1 : 0
+  type  = "zip"
+  // If a sourcefile is specified, use that
+  source_file = var.sourcefile != null ? var.sourcefile : null
+  // Only use the source directory if no file is specified
+  source_dir  = var.sourcefile == null ? var.directory : null
+  output_path = "${var.sourcefile != null ? var.sourcefile : var.directory}.zip"
 }
 
 // Create the actual function
 resource "aws_lambda_function" "function" {
-  depends_on       = [module.logging.complete]
-  filename         = local.archive.output_path
-  function_name    = var.name
-  role             = aws_iam_role.lambda_role.arn
-  handler          = var.handler
-  source_code_hash = local.archive.output_base64sha256
-  runtime          = var.runtime
-  memory_size      = var.memory_size
-  timeout          = var.timeout
-  publish          = true
+  depends_on                     = [module.logging.complete]
+  filename                       = local.archive.output_path
+  function_name                  = var.name
+  role                           = local.iam_role_arn
+  handler                        = var.handler
+  source_code_hash               = local.archive.output_base64sha256
+  runtime                        = var.runtime
+  memory_size                    = var.memory_size
+  timeout                        = var.timeout
+  publish                        = true
+  reserved_concurrent_executions = var.reserved_concurrent_executions
   // Only enclude the environment block if there are any environment vars provided
   dynamic "environment" {
     for_each = length(var.environment) > 0 ? [1] : []
