@@ -35,3 +35,8 @@ variable "pgp_key" {
   type        = string
   default     = null
 }
+variable "config_map" {
+  description = "An optional map of configuration values to store in the subaccount."
+  type        = map(any)
+  default     = {}
+}

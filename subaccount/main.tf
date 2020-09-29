@@ -76,3 +76,15 @@ resource "aws_iam_access_key" "terraform" {
 resource "aws_route53_delegation_set" "delegation" {
   provider = aws.subaccount
 }
+
+// Create a config file in the S3 bucket with values specifically for this subaccount
+resource "aws_s3_bucket_object" "config" {
+  provider = aws.subaccount
+  bucket   = aws_s3_bucket.terraform_state.id
+  key      = "config.json"
+  content = jsonencode(merge({
+    route53_delegation_set_id = aws_route53_delegation_set.delegation.id
+  }, var.config_map))
+  // Must add the content-type metadata so the body can be loaded by Terraform data resource
+  content_type = "application/json"
+}
