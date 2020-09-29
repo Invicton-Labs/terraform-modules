@@ -7,14 +7,20 @@ resource "aws_acm_certificate" "cert" {
 
 // Create a record in Route53 for validating each domain on the certificate
 resource "aws_route53_record" "cert-validation" {
-  // 1 for the main domain name + 1 for each SAN
-  count           = 1 + length(var.subject_alternative_names)
-  name            = tolist(aws_acm_certificate.cert.domain_validation_options)[count.index].resource_record_name
-  type            = tolist(aws_acm_certificate.cert.domain_validation_options)[count.index].resource_record_type
-  zone_id         = var.route53_zone_id
-  records         = [tolist(aws_acm_certificate.cert.domain_validation_options)[count.index].resource_record_value]
-  ttl             = 10
+  // Create a custom mapping so changes in list ordering don't re-create the resource
+  for_each = {
+    for dvo in aws_acm_certificate.cert.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
   allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = var.route53_zone_id
 }
 
 // Validate the certificate
