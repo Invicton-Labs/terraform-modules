@@ -23,6 +23,10 @@ output "iam_key" {
   value       = aws_iam_access_key.terraform
 }
 output "delegation_set" {
-  description = " A Route53 delegation set resource on the subaccount."
+  description = "A Route53 delegation set resource on the subaccount."
   value       = aws_route53_delegation_set.delegation
+}
+output "route53_hosted_zone" {
+  description = "The Route53 hosted zone that was created if the 'hosted_zone_domain' variable was set."
+  value       = var.hosted_zone_domain == null ? null : aws_route53_zone.zone[0]
 }

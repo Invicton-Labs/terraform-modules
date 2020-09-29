@@ -11,8 +11,3 @@ variable "subject_alternative_names" {
   type        = list(string)
   default     = []
 }
-variable "allow_overwrite" {
-  description = "Allow overwriting existing validation Route53 records. Defaults to false."
-  type        = bool
-  default     = false
-}

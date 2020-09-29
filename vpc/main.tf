@@ -39,6 +39,9 @@ resource "aws_subnet" "private" {
   tags = {
     Name = "${each.key} (Private)"
   }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 // Provision all public subnets

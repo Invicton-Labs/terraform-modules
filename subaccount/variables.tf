@@ -35,6 +35,21 @@ variable "pgp_key" {
   type        = string
   default     = null
 }
+variable "hosted_zone_domain" {
+  description = "An optional domain to create a hosted zone for on the subaccount."
+  type        = string
+  default     = null
+}
+variable "hosted_zone_records" {
+  description = "An optional list of Route53 records to create on the optional Route53 hosted zone. Only used if the 'hosted_zone_domain' variable is provided."
+  type = list(object({
+    name    = string
+    type    = string
+    ttl     = number
+    records = list(string)
+  }))
+  default = []
+}
 variable "config_map" {
   description = "An optional map of configuration values to store in the subaccount."
   type        = map(any)
