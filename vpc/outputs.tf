@@ -10,3 +10,7 @@ output "provisioned_azs" {
   description = "A list of all AZ names that subnets have been provisioned for."
   value       = local.azs
 }
+output "vpc" {
+  description = "The VPC resource."
+  value       = aws_vpc.vpc
+}
