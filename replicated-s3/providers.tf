@@ -1,5 +1,6 @@
 provider "aws" {
-  alias       = "primary"
+  alias = "primary"
+  /*
   region      = var.primary_region
   profile     = var.provider_profile
   access_key  = var.provider_profile != null ? null : var.provider_access_key_id
@@ -12,10 +13,12 @@ provider "aws" {
       role_arn = var.provider_role_to_assume
     }
   }
+  */
 }
 
 provider "aws" {
-  alias       = "secondary"
+  alias = "secondary"
+  /*
   region      = var.secondary_region
   profile     = var.provider_profile
   access_key  = var.provider_profile != null ? null : var.provider_access_key_id
@@ -28,4 +31,5 @@ provider "aws" {
       role_arn = var.provider_role_to_assume
     }
   }
+  */
 }
