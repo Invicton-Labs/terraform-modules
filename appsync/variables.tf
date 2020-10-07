@@ -27,6 +27,7 @@ variable "tags" {
   type        = map(string)
   default     = null
 }
+
 variable "datasources" {
   description = "A list of AppSync datasource resources (`aws_appsync_datasource` resource objects). This list must contain all datasource resources that are used by any functions in the `functions` input variable or any unit resolvers in the `unit_resolvers` input variable."
   type = list(object({
@@ -37,6 +38,7 @@ variable "datasources" {
   }))
   default = []
 }
+
 variable "functions" {
   description = "A map of key-map pairs of AppSync functions. The keys are only used for unique identification (e.g. a combination of datasource name and function name). The values are maps themselves."
   type = map(object({
@@ -99,11 +101,12 @@ locals {
     for unit in var.unit_resolvers :
     unit.datasource_name
   ])
-  datasource_names = distinct(concat(local.function_datasources, local.unit_datasources))
-  provided_datasource_names = distinct([
+  provided_datasource_map = {
     for datasource in var.datasources :
-    datasource.name
-  ])
+    datasource.name => datasource
+  }
+  datasource_names          = distinct(concat(local.function_datasources, local.unit_datasources))
+  provided_datasource_names = keys(local.provided_datasource_map)
 }
 
 // Assert that variables are correct
@@ -119,7 +122,8 @@ module "assert_openid_config" {
 }
 module "assert_datasources_exist" {
   for_each      = toset(local.datasource_names)
+  depends_on    = [var.datasources]
   source        = "../assert"
-  error_message = "Datasource `${each.value}` is referred to in a function or unit resolver, but was not provided in the `datasources` variable."
+  error_message = "Datasource `${each.value}` is referred to in a function or unit resolver, but was not provided in the `datasources` variable ([${join(", ", local.provided_datasource_names)}])."
   condition     = contains(local.provided_datasource_names, each.value)
 }

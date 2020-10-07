@@ -111,11 +111,25 @@ resource "aws_appsync_graphql_api" "api" {
 // Create the functions that can be used in pipelines
 resource "aws_appsync_function" "functions" {
   for_each                  = var.functions
+  depends_on                = [var.datasources]
   api_id                    = aws_appsync_graphql_api.api.id
   data_source               = each.value.datasource_name
   name                      = each.value.name
   request_mapping_template  = each.value.request_mapping_template == "" ? " " : each.value.request_mapping_template
   response_mapping_template = each.value.response_mapping_template == "" ? " " : each.value.response_mapping_template
+}
+
+// Create the unit resolvers
+resource "aws_appsync_resolver" "unit" {
+  for_each          = var.unit_resolvers
+  depends_on        = [var.datasources]
+  api_id            = aws_appsync_graphql_api.api.id
+  type              = each.value.type
+  field             = each.value.name
+  data_source       = each.value.datasource_name
+  request_template  = each.value.request_mapping_template == "" ? " " : each.value.request_mapping_template
+  response_template = each.value.response_mapping_template == "" ? " " : each.value.response_mapping_template
+  kind              = "UNIT"
 }
 
 // Create the pipeline resolvers
@@ -133,16 +147,4 @@ resource "aws_appsync_resolver" "pipelines" {
       aws_appsync_function.functions[function].function_id
     ]
   }
-}
-
-// Create the unit resolvers
-resource "aws_appsync_resolver" "unit" {
-  for_each          = var.unit_resolvers
-  api_id            = aws_appsync_graphql_api.api.id
-  type              = each.value.type
-  field             = each.value.name
-  data_source       = each.value.datasource_name
-  request_template  = each.value.request_mapping_template == "" ? " " : each.value.request_mapping_template
-  response_template = each.value.response_mapping_template == "" ? " " : each.value.response_mapping_template
-  kind              = "UNIT"
 }
