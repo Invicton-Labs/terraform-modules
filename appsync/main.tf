@@ -108,6 +108,11 @@ resource "aws_appsync_graphql_api" "api" {
   }
 }
 
+// Get the log group that was automatically created by the GraphQL API
+data "aws_cloudwatch_log_group" "api" {
+  name = "/aws/appsync/apis/${aws_appsync_graphql_api.api.id}"
+}
+
 // Create the functions that can be used in pipelines
 resource "aws_appsync_function" "functions" {
   for_each                  = var.functions

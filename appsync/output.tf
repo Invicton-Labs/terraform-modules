@@ -22,3 +22,7 @@ output "pipeline_resolvers" {
   description = "A map of AppSync pipeline resolver resources that were created. The map keys correspond to the map keys in the `pipeline_resolvers` input variable."
   value       = aws_appsync_resolver.pipelines
 }
+output "log_group" {
+  description = "The CloudWatch log group resource that was automatically created by the AppSync API."
+  value       = data.aws_cloudwatch_log_group.api
+}
