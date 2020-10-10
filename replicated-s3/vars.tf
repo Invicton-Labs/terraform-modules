@@ -82,6 +82,16 @@ variable "noncurrent_version_transition_class" {
   type        = string
   default     = null
 }
+variable "primary_bucket_policy" {
+  description = "JSON-encoded policy to attach to the primary bucket."
+  type = string
+  default = null
+}
+variable "secondary_bucket_policy" {
+  description = "JSON-encoded policy to attach to the secondary bucket."
+  type = string
+  default = null
+}
 
 data "aws_region" "primary" {
   provider = aws.primary

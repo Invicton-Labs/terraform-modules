@@ -132,3 +132,18 @@ resource "aws_s3_bucket" "secondary" {
     }
   }
 }
+
+// If specified, attach a policy to the primary bucket
+resource "aws_s3_bucket_policy" "primary" {
+  count = var.primary_bucket_policy != null ? 1 : 0
+  provider      = aws.primary
+  bucket = aws_s3_bucket.primary.id
+  policy = var.primary_bucket_policy
+}
+// If specified, attach a policy to the secondary bucket
+resource "aws_s3_bucket_policy" "secondary" {
+  count = var.secondary_bucket_policy != null ? 1 : 0
+  provider      = aws.secondary
+  bucket = aws_s3_bucket.secondary.id
+  policy = var.secondary_bucket_policy
+}
