@@ -11,6 +11,7 @@ locals {
             ]...)
     ]...)...)
 
+    // For each input map, convert it to a single-level map with a unique key for every nested value
     fields_json = [
         for i in range(0, length(var.maps)):
         merge([
@@ -21,21 +22,11 @@ locals {
             } 
         ]...)
     ]
+
+    // Merge the maps using the standard merge function, which will cause higher-precedence map values to overwrite lower-precedence values
     merged_map = merge(local.fields_json...)
-/*
-    merged_fields = merge([
-        for field in local.merged_map:
-        {
-            for path_length in range(1, length(field.path) + 1):
-            jsonencode(slice(field.path, 0, path_length)) => {
-                key = jsonencode(slice(field.path, 0, path_length))
-                is_final = field.is_final
-                path = slice(field.path, 0, path_length)
-                value = field.is_final ? field.value : null
-            }
-        }
-    ]...)
-*/
+
+    // Split the merged fields into segments for each depth
     merged_fields_by_depth = {
         for depth in range(0, local.greatest_depth):
         depth => {
@@ -44,16 +35,7 @@ locals {
             if length(local.merged_map[key].path) == depth + 1
         }
     }
-/*
-    all_fields_by_depth = {
-        for depth in range(0, local.greatest_depth):
-        depth => {
-        for key in keys(local.all_fields):
-            key => local.all_fields[key]
-            if length(local.all_fields[key].path) == depth + 1
-        }
-    }
-*/
+    // The lowest level of the re-assembled map is special and not part of the auto-generated depth.tf file
     m0 = {
         for field in local.merged_fields_by_depth[0]:
         field.path[0] => {final_val = field.value, sub_val = lookup(local.m1, field.key, null)}[field.is_final ? "final_val" : "sub_val"]
@@ -70,7 +52,7 @@ module "asset_sufficient_levels" {
     ]...) == []
 }
 
-// Uncomment this to generate a new file with a different max depth
+// Use this  from a DIFFERENT terraform project to generate a new file with a different max depth
 /*
 resource "local_file" "depth" {
     content     = templatefile("${path.module}/../deepmerge/depth.tmpl", {max_depth = 100})
