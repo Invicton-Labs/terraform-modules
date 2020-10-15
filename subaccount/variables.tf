@@ -52,6 +52,10 @@ variable "hosted_zone_records" {
 }
 variable "config_map" {
   description = "An optional map of configuration values to store in the subaccount."
-  type        = map(any)
+  type        = any
   default     = {}
+  validation {
+    condition = try(tonumber(var.config_map), tobool(var.config_map), tostring(var.config_map), tolist(var.config_map), null) == null
+    error_message = "The `config_map` variable must be a a map/object."
+  }
 }
