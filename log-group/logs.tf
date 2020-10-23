@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "logging" {
       "logs:CreateLogStream"
     ]
     resources = [
-      "${aws_cloudwatch_log_group.loggroup.arn}"
+      aws_cloudwatch_log_group.loggroup.arn
     ]
   }
   statement {
