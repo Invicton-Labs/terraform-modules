@@ -7,17 +7,11 @@ resource "aws_cloudwatch_log_group" "loggroup" {
 data "aws_iam_policy_document" "logging" {
   statement {
     actions = [
-      "logs:CreateLogStream"
-    ]
-    resources = [
-      aws_cloudwatch_log_group.loggroup.arn
-    ]
-  }
-  statement {
-    actions = [
+      "logs:CreateLogStream",
       "logs:PutLogEvents"
     ]
     resources = [
+      aws_cloudwatch_log_group.loggroup.arn,
       "${aws_cloudwatch_log_group.loggroup.arn}:*"
     ]
   }
