@@ -1,34 +1,3 @@
-// This section has been replaced with accepting provider proxies from the caller
-/*
-variable "primary_region" {
-  description = "The region of the primary bucket."
-  type        = string
-}
-variable "secondary_region" {
-  description = "The region of the secondary (replicated) bucket."
-  type        = string
-}
-variable "provider_profile" {
-  description = "The AWS credentials profile to use for the primary and secondary region providers. Mutually exclusive with the 'provider_access_key_id' and 'provider_access_key_secret' variables."
-  type        = string
-  default     = null
-}
-variable "provider_access_key_id" {
-  description = "The AWS IAM access key ID to use for the primary and secondary region providers. Mutually exclusive with the 'provider_profile' variable."
-  type        = string
-  default     = null
-}
-variable "provider_access_key_secret" {
-  description = "The AWS IAM access key secret to use for the primary and secondary region providers. Mutually exclusive with the 'provider_profile' variable."
-  type        = string
-  default     = null
-}
-variable "provider_role_to_assume" {
-  description = "The IAM role to assume for the primary and secondary region providers. Defaults to none."
-  type        = string
-  default     = null
-}
-*/
 variable "name_prefix" {
   description = "The prefix part of the bucket name. The complete bucket name will be '{name_prefix}_{primary/secondary}_{name_suffix}'."
   type        = string
@@ -42,10 +11,40 @@ variable "versioning" {
   description = "Whether objects in the buckets should be versioned. If set to 'false', versioning will still be configured on the buckets (since it is required for replication), but non-current versions of objects will be automatically deleted as soon as possible."
   type        = bool
 }
-variable "acl" {
-  description = "The ACL name to apply to the buckets. Defaults to 'private'."
+variable "primary_acl" {
+  description = "The ACL name to apply to the primary bucket. Defaults to 'private'."
   type        = string
   default     = "private"
+}
+variable "secondary_acl" {
+  description = "The ACL name to apply to the secondary bucket. Defaults to 'private'."
+  type        = string
+  default     = "private"
+}
+variable "primary_grants" {
+  description = "A list of ACL grants to apply to the primary bucket."
+  type = list(object({
+    id          = string
+    type        = string
+    permissions = list(string)
+    uri         = string
+  }))
+  default = []
+}
+variable "secondary_grants" {
+  description = "A list of ACL grants to apply to the secondary bucket."
+  type = list(object({
+    id          = string
+    type        = string
+    permissions = list(string)
+    uri         = string
+  }))
+  default = []
+}
+variable "cloudfront_logging" {
+  description = "Whether the primary bucket will be used to write CloudFront logs to. This will automatically add the required ACL to enable this."
+  type        = bool
+  default     = false
 }
 variable "force_destroy" {
   description = "Whether buckets should be destroyed if configuration changes. Defaults to 'false'."
@@ -84,13 +83,13 @@ variable "noncurrent_version_transition_class" {
 }
 variable "primary_bucket_policy" {
   description = "JSON-encoded policy to attach to the primary bucket."
-  type = string
-  default = null
+  type        = string
+  default     = null
 }
 variable "secondary_bucket_policy" {
   description = "JSON-encoded policy to attach to the secondary bucket."
-  type = string
-  default = null
+  type        = string
+  default     = null
 }
 
 data "aws_region" "primary" {

@@ -36,7 +36,9 @@ data "aws_iam_policy_document" "s3-replicate-policy" {
       "s3:ReplicateTags",
       "s3:GetObjectVersionTagging"
     ]
-    resources = ["${local.secondary_bucket_arn}/*"]
+    resources = [
+      "${local.secondary_bucket_arn}/*"
+    ]
   }
 }
 
