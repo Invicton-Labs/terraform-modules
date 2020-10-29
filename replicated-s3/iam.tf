@@ -21,6 +21,9 @@ resource "aws_iam_role" "s3-replicator" {
     ]
 }
 POLICY
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 data "aws_iam_policy_document" "s3-replicate-policy" {
@@ -51,4 +54,7 @@ resource "aws_iam_role_policy" "replication" {
   provider = aws.primary
   role     = aws_iam_role.s3-replicator.name
   policy   = data.aws_iam_policy_document.s3-replicate-policy.json
+  lifecycle {
+    create_before_destroy = true
+  }
 }
