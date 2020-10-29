@@ -93,13 +93,8 @@ variable "secondary_bucket_policy" {
 }
 variable "website" {
   description = "Website configuration for S3 buckets acting as static website hosts."
-  type = object({
-    index_document           = string
-    error_document           = string
-    redirect_all_requests_to = string
-    routing_rules            = string
-  })
-  default = null
+  type        = map(string)
+  default     = null
 }
 
 data "aws_region" "primary" {
