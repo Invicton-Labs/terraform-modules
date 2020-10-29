@@ -100,6 +100,15 @@ resource "aws_s3_bucket" "primary" {
       allowed_headers = ["*"]
     }
   }
+  dynamic "website" {
+    for_each = var.website != null ? [1] : []
+    content {
+      index_document           = lookup(var.website, "index_document", null)
+      error_document           = lookup(var.website, "error_document", null)
+      redirect_all_requests_to = lookup(var.website, "redirect_all_requests_to", null)
+      routing_rules            = lookup(var.website, "routing_rules", null)
+    }
+  }
   replication_configuration {
     role = aws_iam_role.s3-replicator.arn
     rules {
@@ -181,6 +190,15 @@ resource "aws_s3_bucket" "secondary" {
       allowed_methods = ["GET", "PUT", "POST", "DELETE", "HEAD"]
       allowed_origins = var.cors_origins
       allowed_headers = ["*"]
+    }
+  }
+  dynamic "website" {
+    for_each = var.website != null ? [1] : []
+    content {
+      index_document           = lookup(var.website, "index_document", null)
+      error_document           = lookup(var.website, "error_document", null)
+      redirect_all_requests_to = lookup(var.website, "redirect_all_requests_to", null)
+      routing_rules            = lookup(var.website, "routing_rules", null)
     }
   }
 }
