@@ -1,7 +1,8 @@
 // A role for the S3 buckets to use to do cross-region replication
 resource "aws_iam_role" "s3-replicator" {
   provider           = aws.primary
-  name_prefix        = "S3Replicator-${var.name_prefix}-"
+  name_prefix        = "${var.name_prefix}-"
+  path               = "/replicated-s3/"
   assume_role_policy = <<POLICY
 {
     "Version": "2012-10-17",
