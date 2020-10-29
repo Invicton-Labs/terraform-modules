@@ -1,7 +1,11 @@
+locals {
+  shortened_role_name_prefix = length(var.name_prefix) <= 31 ? var.name_prefix : "${substr(var.name_prefix, 0, 15)}-${substr(var.name_prefix, length(var.name_prefix) - 15, 15)}"
+}
+
 // A role for the S3 buckets to use to do cross-region replication
 resource "aws_iam_role" "s3-replicator" {
   provider           = aws.primary
-  name_prefix        = "${var.name_prefix}-"
+  name_prefix        = "${local.shortened_role_name_prefix}-"
   path               = "/replicated-s3/"
   assume_role_policy = <<POLICY
 {
