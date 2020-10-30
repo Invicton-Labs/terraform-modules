@@ -96,6 +96,11 @@ variable "website" {
   type        = map(string)
   default     = null
 }
+variable "public_access_block" {
+  description = "Whether to block all public access to the buckets. Defaults to `true`."
+  type        = bool
+  default     = true
+}
 
 data "aws_region" "primary" {
   provider = aws.primary

@@ -217,3 +217,23 @@ resource "aws_s3_bucket_policy" "secondary" {
   bucket   = aws_s3_bucket.secondary.id
   policy   = var.secondary_bucket_policy
 }
+
+// If desired, create a public access block
+resource "aws_s3_bucket_public_access_block" "primary" {
+  count                   = var.public_access_block ? 1 : 0
+  provider                = aws.primary
+  bucket                  = aws_s3_bucket.primary.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+resource "aws_s3_bucket_public_access_block" "secondary" {
+  count                   = var.public_access_block ? 1 : 0
+  provider                = aws.secondary
+  bucket                  = aws_s3_bucket.secondary.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
