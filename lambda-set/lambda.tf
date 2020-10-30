@@ -48,6 +48,12 @@ resource "aws_lambda_function" "function" {
       security_group_ids = var.vpc_config.security_group_ids
     }
   }
+  lifecycle {
+    ignore_changes = [
+      qualified_arn,
+      version
+    ]
+  }
 }
 
 // Configure async call config
