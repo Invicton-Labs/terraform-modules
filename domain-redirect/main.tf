@@ -33,23 +33,17 @@ data "archive_file" "lambda" {
 
 resource "aws_s3_bucket" "origin" {
   bucket = "domain-redirect-${random_id.function_id.hex}"
-  acl    = "public-read"
-  website {
-    index_document = "index.html"
-    error_document = "index.html"
-  }
+  acl    = "private"
 }
 
-// A policy that allows public read
 data "aws_iam_policy_document" "origin" {
   statement {
-    actions = ["s3:GetObject"]
-    resources = [
-      "${aws_s3_bucket.origin.arn}/*"
-    ]
+    actions   = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.origin.arn}/*"]
+
     principals {
-      type        = "*"
-      identifiers = ["*"]
+      type        = "AWS"
+      identifiers = [aws_cloudfront_origin_access_identity.origin.iam_arn]
     }
   }
 }
@@ -60,12 +54,11 @@ resource "aws_s3_bucket_policy" "origin" {
 }
 
 resource "aws_s3_bucket_public_access_block" "origin" {
-  depends_on              = [aws_s3_bucket_policy.origin]
   bucket                  = aws_s3_bucket.origin.id
   block_public_acls       = true
   block_public_policy     = true
-  ignore_public_acls      = false
-  restrict_public_buckets = false
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 resource "aws_cloudfront_origin_access_identity" "origin" {
@@ -94,14 +87,10 @@ resource "aws_cloudfront_distribution" "redirect" {
   ]
 
   origin {
-    domain_name = aws_s3_bucket.origin.website_endpoint
+    domain_name = aws_s3_bucket.origin.bucket_regional_domain_name
     origin_id   = "S3-Origin"
-
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "match-viewer"
-      origin_ssl_protocols   = ["TLSv1.2"]
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.origin.cloudfront_access_identity_path
     }
   }
 
