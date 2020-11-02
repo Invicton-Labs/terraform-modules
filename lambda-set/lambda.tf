@@ -11,7 +11,7 @@ module "logging" {
 
 // Create the ZIP file for the Lambda
 data "archive_file" "archive" {
-  count = var.archive.output_path == "" ? 1 : 0
+  count = var.archive == null ? 1 : 0
   type  = "zip"
   // If a sourcefile is specified, use that
   source_file = var.sourcefile != null ? var.sourcefile : null

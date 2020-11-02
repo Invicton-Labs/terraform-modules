@@ -56,10 +56,7 @@ variable "archive" {
     output_path         = string
     output_base64sha256 = string
   })
-  default = {
-    output_path         = ""
-    output_base64sha256 = ""
-  }
+  default = null
 }
 variable "iam_role_arn" {
   type    = any
@@ -130,7 +127,7 @@ variable "reserved_concurrent_executions" {
 
 
 locals {
-  archive = var.archive.output_path != "" ? var.archive : {
+  archive = var.archive != null ? var.archive : {
     output_path         = data.archive_file.archive[0].output_path
     output_base64sha256 = data.archive_file.archive[0].output_base64sha256
   }
