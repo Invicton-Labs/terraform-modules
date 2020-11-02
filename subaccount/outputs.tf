@@ -6,9 +6,12 @@ output "admin_role_arn" {
   description = "The ARN of the subaccount admin role."
   value       = local.subaccount_role_arn
 }
-output "state_bucket" {
+output "state_buckets" {
   description = "The S3 bucket resource on the subaccount for Terraform remote state storage."
-  value       = aws_s3_bucket.terraform_state
+  value = {
+    primary   = module.s3-terraform-state.primary_bucket
+    secondary = module.s3-terraform-state.secondary_bucket
+  }
 }
 output "lock_table" {
   description = "The DynamoDB table resource on the subaccount for Terraform locking."

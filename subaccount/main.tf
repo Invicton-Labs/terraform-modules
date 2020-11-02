@@ -11,31 +11,32 @@ locals {
   subaccount_role_arn = "arn:aws:iam::${aws_organizations_account.subaccount.id}:role/${var.role_name}"
 }
 
-// Configure the default provider region
 provider "aws" {
   alias   = "subaccount"
-  region  = var.region
+  region  = var.region_primary
+  profile = var.aws_profile
+  assume_role {
+    role_arn = local.subaccount_role_arn
+  }
+}
+provider "aws" {
+  alias   = "subaccount_secondary"
+  region  = var.region_secondary
   profile = var.aws_profile
   assume_role {
     role_arn = local.subaccount_role_arn
   }
 }
 
-// Create an S3 bucket for storing the state files for the subaccounts
-resource "aws_s3_bucket" "terraform_state" {
-  provider = aws.subaccount
-  bucket   = "terraform-state-${aws_organizations_account.subaccount.id}"
-
-  versioning {
-    enabled = true
-  }
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
+module "s3-terraform-state" {
+  source        = "github.com/Imperative-Systems-Inc/terraform-modules/replicated-s3"
+  name_prefix   = "terraform-state-${aws_organizations_account.subaccount.id}"
+  force_destroy = false
+  encrypt       = true
+  versioning    = true
+  providers = {
+    aws.primary   = aws.subaccount
+    aws.secondary = aws.subaccount_secondary
   }
 }
 
@@ -100,7 +101,7 @@ resource "aws_route53_record" "records" {
 // Create a config file in the S3 bucket with values specifically for this subaccount
 resource "aws_s3_bucket_object" "config" {
   provider = aws.subaccount
-  bucket   = aws_s3_bucket.terraform_state.id
+  bucket   = module.s3-terraform-state.primary_bucket.id
   key      = "config.json"
   content = jsonencode(merge(
     {

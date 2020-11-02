@@ -22,6 +22,11 @@ variable "timeout" {
 variable "edge" {
   type = bool
 }
+variable "publish" {
+  description = "Whether the Lambda should be published as a new version."
+  type        = bool
+  default     = true
+}
 // Async config
 variable "maximum_event_age_in_seconds" {
   type    = number

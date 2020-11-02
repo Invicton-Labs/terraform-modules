@@ -31,7 +31,7 @@ resource "aws_lambda_function" "function" {
   runtime                        = var.runtime
   memory_size                    = var.memory_size
   timeout                        = var.timeout
-  publish                        = true
+  publish                        = var.publish
   reserved_concurrent_executions = var.reserved_concurrent_executions
   // Only enclude the environment block if there are any environment vars provided
   dynamic "environment" {

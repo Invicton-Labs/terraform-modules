@@ -6,8 +6,12 @@ variable "email" {
   description = "The email address to use for the subaccount's root user."
   type        = string
 }
-variable "region" {
-  description = "The region to deploy subaccount resources in (e.g. S3 bucket for state)."
+variable "region_primary" {
+  description = "The primary region to deploy subaccount resources in (e.g. S3 bucket for state)."
+  type        = string
+}
+variable "region_secondary" {
+  description = "The secondary region to deploy subaccount resources in (e.g. replicated S3 bucket for state)."
   type        = string
 }
 variable "aws_profile" {
@@ -55,7 +59,7 @@ variable "config_map" {
   type        = any
   default     = {}
   validation {
-    condition = try(tonumber(var.config_map), tobool(var.config_map), tostring(var.config_map), tolist(var.config_map), null) == null
+    condition     = try(tonumber(var.config_map), tobool(var.config_map), tostring(var.config_map), tolist(var.config_map), null) == null
     error_message = "The `config_map` variable must be a a map/object."
   }
 }
