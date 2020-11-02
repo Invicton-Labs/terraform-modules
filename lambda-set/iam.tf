@@ -24,6 +24,9 @@ resource "aws_iam_role" "lambda_role" {
   ]
 }
 EOF
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 // Attach a policy that allows it to write logs
