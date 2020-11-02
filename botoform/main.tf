@@ -22,6 +22,7 @@ module "lambda" {
   role_policy_arns = ["arn:aws:iam::aws:policy/AdministratorAccess"]
 }
 
+// Invoke the lambda once for each provided script
 data "aws_lambda_invocation" "botoform" {
   depends_on    = [module.lambda.complete]
   for_each      = var.scripts
