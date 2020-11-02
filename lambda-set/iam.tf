@@ -1,12 +1,7 @@
-// Create a random ID for use with the role name, in case the same function name is used in multiple regions (role names would clash in IAM)
-resource "random_id" "role" {
-  count       = var.iam_role_arn == null ? 1 : 0
-  byte_length = 8
-}
-
 resource "aws_iam_role" "lambda_role" {
   count                 = var.iam_role_arn == null ? 1 : 0
-  name                  = "lambda-${var.name}-${random_id.role[0].b64_url}"
+  name_prefix           = var.name
+  path                  = "/lambda/"
   force_detach_policies = true
   assume_role_policy    = <<EOF
 {
