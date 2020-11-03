@@ -30,10 +30,14 @@ data "aws_arn" "lambda_role" {
   arn = var.iam_role_arn == null ? aws_iam_role.lambda_role[0].arn : var.iam_role_arn
 }
 
+locals {
+  role_name_parts = split("/", data.aws_arn.lambda_role.resource)
+}
+
 // Attach a policy that allows it to write logs
 resource "aws_iam_role_policy" "cloudwatch_write" {
   name   = "cloudwatch_write"
-  role   = data.aws_arn.lambda_role.resource
+  role   = local.role_name_parts[length(local.role_name_parts) - 1]
   policy = module.logging.logging_policy_data.json
 }
 
