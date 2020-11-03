@@ -62,6 +62,11 @@ variable "iam_role_arn" {
   type    = any
   default = null
 }
+variable "add_logs_policy" {
+  description = "Whether to add a policy allowing logging to the created log group (only applies if the `iam_role_arn` variable is provided)."
+  type        = bool
+  default     = false
+}
 // Any policies to attach to the role that this Lambda runs as
 variable "role_policy_arns" {
   type    = list(string)

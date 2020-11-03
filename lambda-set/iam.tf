@@ -36,6 +36,7 @@ locals {
 
 // Attach a policy that allows it to write logs
 resource "aws_iam_role_policy" "cloudwatch_write" {
+  count  = var.iam_role_arn == null || var.add_logs_policy ? 1 : 0
   name   = "cloudwatch_write"
   role   = local.role_name_parts[length(local.role_name_parts) - 1]
   policy = module.logging.logging_policy_data.json
