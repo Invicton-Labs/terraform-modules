@@ -28,9 +28,8 @@ EOF
 
 // Attach a policy that allows it to write logs
 resource "aws_iam_role_policy" "cloudwatch_write" {
-  count  = var.iam_role_arn == null ? 1 : 0
   name   = "cloudwatch_write"
-  role   = aws_iam_role.lambda_role[0].id
+  role   = var.iam_role_arn == null ? aws_iam_role.lambda_role[0].id : var.iam_role_arn
   policy = module.logging.logging_policy_data.json
 }
 
