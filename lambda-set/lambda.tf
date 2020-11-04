@@ -22,7 +22,8 @@ data "archive_file" "archive" {
 
 // Create the actual function
 resource "aws_lambda_function" "function" {
-  depends_on                     = [module.logging.complete]
+  // Don't create the function until the log group has been created
+  depends_on                     = [module.logging.log_group]
   filename                       = local.archive.output_path
   function_name                  = var.name
   role                           = local.iam_role_arn
