@@ -10,8 +10,9 @@ locals {
   pipfile_lock_contents = local.pipfile_lock_exists ? file(local.pipfile_lock) : ""
   venv_name             = ".venv"
   venv_path             = "${local.working_dir}/${local.venv_name}"
-  build_hash_file       = "${local.working_dir}/${local.venv_name}/build-hash"
-  new_build_hash        = base64sha256("${local.pipfile_contents}${local.pipfile_lock_contents}")
+  dependency_hash_file  = "dependency_hash"
+  dependency_hash_path  = "${local.working_dir}/${local.venv_name}/${local.dependency_hash_file}"
+  new_dependency_hash   = base64sha256("${local.pipfile_contents}${local.pipfile_lock_contents}")
   dependency_path       = "${local.venv_path}/Lib/site-packages"
   dependency_archive    = "${local.venv_path}/dependencies.zip"
   source_archive        = "${local.venv_path}/source.zip"
@@ -20,7 +21,7 @@ locals {
   package_archive       = abspath(var.archive_file == null ? "${dirname(local.working_dir)}/${basename(local.working_dir)}.zip" : var.archive_file)
 }
 
-resource "local_file" "build_hash" {
+resource "local_file" "dependency_hash" {
   depends_on = [
     module.assert_pipenv_exists.checked,
     module.assert_zip_exists.checked,
@@ -28,13 +29,13 @@ resource "local_file" "build_hash" {
     module.assert_piplock.checked,
     module.assert_archive_is_zip.checked,
   ]
-  content  = local.new_build_hash
-  filename = local.build_hash_file
+  content  = local.new_dependency_hash
+  filename = local.dependency_hash_path
 }
 
-data "local_file" "build_hash" {
-  depends_on = [local_file.build_hash]
-  filename   = local_file.build_hash.filename
+data "local_file" "dependency_hash" {
+  depends_on = [local_file.dependency_hash]
+  filename   = local_file.dependency_hash.filename
 }
 
 resource "null_resource" "pipenv_install" {
@@ -47,7 +48,7 @@ resource "null_resource" "pipenv_install" {
     module.assert_archive_is_zip.checked,
   ]
   triggers = {
-    build_hash = data.local_file.build_hash.content
+    dependency_hash = data.local_file.dependency_hash.content
   }
   provisioner "local-exec" {
     command     = local.is_windows ? "${abspath(path.module)}/pipinstall.ps1" : "${abspath(path.module)}/pipinstall.sh"
@@ -57,6 +58,7 @@ resource "null_resource" "pipenv_install" {
       PIPENV_VENV_IN_PROJECT = true
       VENV_PATH              = local.is_windows ? replace(local.venv_path, "/", "\\") : local.venv_path
       DEPENDENCY_PATH        = local.is_windows ? replace(local.dependency_path, "/", "\\") : local.dependency_path
+      DEPENDENCY_HASH_FILE   = local.dependency_hash_file
     }
   }
 }
@@ -83,7 +85,7 @@ resource "null_resource" "merge_archives" {
   ]
   // Trigger a rebuild if either the dependencies or the source changed
   triggers = {
-    dependencies = data.local_file.build_hash.content
+    dependencies = data.local_file.dependency_hash.content
     source       = data.archive_file.source[0].output_base64sha256
   }
   provisioner "local-exec" {
