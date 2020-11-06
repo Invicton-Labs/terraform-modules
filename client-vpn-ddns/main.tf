@@ -70,7 +70,8 @@ module "lambda_ddns" {
     HOSTED_ZONE_ID         = aws_route53_zone.private.zone_id
     HOSTED_ZONE_NAME       = var.private_hosted_zone_name
   }
-  schedules = ["rate(1 minute)"]
+  schedules                      = ["rate(1 minute)"]
+  reserved_concurrent_executions = 1
 }
 
 output "vpc_dhcp_options" {
