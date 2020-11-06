@@ -14,3 +14,6 @@ output "vpc" {
   description = "The VPC resource."
   value       = aws_vpc.vpc
 }
+output "nat_azs" {
+  value = local.nat_azs
+}

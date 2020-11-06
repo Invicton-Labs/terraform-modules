@@ -82,10 +82,6 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public-egress.id
 }
 
-output "nat_azs" {
-  value = local.nat_azs
-}
-
 // Allocate an elastic IP for assigning to the NAT Gateway
 resource "aws_eip" "nat" {
   for_each = toset(local.nat_azs)

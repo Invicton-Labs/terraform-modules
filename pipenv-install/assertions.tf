@@ -12,16 +12,16 @@ module "assert_pipenv_exists" {
 }
 
 // Check if zip is installed
-module "zip_exists" {
+module "unzip_exists" {
   source  = "../command-exists"
-  command = "zip"
+  command = "unzip"
 }
 
 // Make sure Pipenv is installed
-module "assert_zip_exists" {
+module "assert_unzip_exists" {
   source        = "../assert"
-  condition     = module.zip_exists.exists || local.is_windows
-  error_message = "'zip' command not found. Zip must be installed to use the 'pipenv-install' module."
+  condition     = module.unzip_exists.exists || local.is_windows
+  error_message = "'unzip' command not found. Unzip must be installed to use the 'pipenv-install' module on Unix-based operating systems."
 }
 
 // Make sure there's a Pipfile to install from

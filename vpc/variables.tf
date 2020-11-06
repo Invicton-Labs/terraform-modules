@@ -38,7 +38,7 @@ variable "tags" {
   default     = {}
 }
 variable "max_azs" {
-  description = "The maximum number of AZs to split the CIDR block across. Defaults to 8. At the time of writing, the largest AWS region has 6 AZs, but this allows that number to grow without having to re-split the block."
+  description = "The maximum number of AZs to split the CIDR block across. Defaults to 12. At the time of writing, the largest AWS region has 6 AZs, but this allows that number to grow without having to re-split the block."
   type        = number
   default     = 12
 }

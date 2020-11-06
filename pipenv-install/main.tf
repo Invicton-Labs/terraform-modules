@@ -24,7 +24,7 @@ locals {
 resource "local_file" "dependency_hash" {
   depends_on = [
     module.assert_pipenv_exists.checked,
-    module.assert_zip_exists.checked,
+    module.assert_unzip_exists.checked,
     module.assert_pipfile.checked,
     module.assert_piplock.checked,
     module.assert_archive_is_zip.checked,
@@ -42,7 +42,7 @@ resource "null_resource" "pipenv_install" {
   count = local.pipfile_exists ? 1 : 0
   depends_on = [
     module.assert_pipenv_exists.checked,
-    module.assert_zip_exists.checked,
+    module.assert_unzip_exists.checked,
     module.assert_pipfile.checked,
     module.assert_piplock.checked,
     module.assert_archive_is_zip.checked,

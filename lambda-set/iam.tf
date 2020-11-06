@@ -4,7 +4,7 @@ locals {
 
 resource "aws_iam_role" "lambda_role" {
   count                 = var.iam_role_arn == null ? 1 : 0
-  name_prefix           = local.shortened_role_name_prefix
+  name_prefix           = "${local.shortened_role_name_prefix}-"
   path                  = "/lambda/"
   force_detach_policies = true
   assume_role_policy    = <<EOF
