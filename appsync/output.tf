@@ -23,6 +23,6 @@ output "pipeline_resolvers" {
   value       = aws_appsync_resolver.pipelines
 }
 output "log_group" {
-  description = "The CloudWatch log group resource that was automatically created by the AppSync API."
-  value       = data.aws_cloudwatch_log_group.api
+  description = "The CloudWatch log group resource that was created for the AppSync API."
+  value       = aws_cloudwatch_log_group.api
 }

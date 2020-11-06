@@ -86,6 +86,11 @@ variable "logging_level" {
   type        = string
   default     = "ALL"
 }
+variable "log_retention_days" {
+  description = "How many days to keep the AppSync logs in CloudWatch for."
+  type        = number
+  default     = 0
+}
 variable "logging_exclude_verbose_content" {
   description = "Set to TRUE to exclude sections that contain information such as headers, context, and evaluated mapping templates, regardless of logging level."
   type        = bool
