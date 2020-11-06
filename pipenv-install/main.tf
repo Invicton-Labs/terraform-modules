@@ -21,6 +21,12 @@ locals {
   package_archive       = abspath(var.archive_file == null ? "${dirname(local.working_dir)}/${basename(local.working_dir)}.zip" : var.archive_file)
 }
 
+// Create the directory to be bundled in the end, so no errors are thrown for it not existing
+data "external" "create_empty_archive_source" {
+  count       = var.create_archive ? 1 : 0
+  program = local.is_windows ? ["Powershell.exe", "${path.module}/mkdir.ps1", replace(local.archive_temp_dir, "/", "\\")] : ["bash", "${path.module}/mkdir.sh",  local.archive_temp_dir]
+}
+
 resource "local_file" "dependency_hash" {
   depends_on = [
     module.assert_pipenv_exists.checked,
@@ -65,7 +71,10 @@ resource "null_resource" "pipenv_install" {
 
 data "archive_file" "source" {
   count       = var.create_archive ? 1 : 0
-  depends_on  = [null_resource.pipenv_install]
+  depends_on  = [
+    data.external.create_empty_archive_source,
+    null_resource.pipenv_install
+  ]
   type        = "zip"
   source_dir  = local.working_dir
   output_path = local.source_archive
