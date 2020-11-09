@@ -89,13 +89,13 @@ resource "aws_route53_zone" "zone" {
 // If desired, add records to the hosted zone
 resource "aws_route53_record" "records" {
   provider        = aws.subaccount
-  count           = var.hosted_zone_domain == null ? 0 : length(var.hosted_zone_records)
+  for_each        = var.hosted_zone_domain == null ? {} : var.hosted_zone_records
   allow_overwrite = true
   zone_id         = aws_route53_zone.zone[0].id
-  name            = var.hosted_zone_records[count.index].name
-  type            = var.hosted_zone_records[count.index].type
-  ttl             = var.hosted_zone_records[count.index].ttl
-  records         = var.hosted_zone_records[count.index].records
+  name            = each.value.name
+  type            = each.value.type
+  ttl             = each.value.ttl
+  records         = each.value.records
 }
 
 // Create a config file in the S3 bucket with values specifically for this subaccount
