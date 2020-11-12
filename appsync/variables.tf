@@ -27,7 +27,31 @@ variable "tags" {
   type        = map(string)
   default     = null
 }
-
+variable "openid_connect_config" {
+  description = "The OpenID configuration block."
+  type        = map(string)
+  default     = null
+}
+variable "user_pool_config" {
+  description = "The Cognito User Pool configuration block."
+  type        = map(string)
+  default     = null
+}
+variable "logging_level" {
+  description = "The logging level. Valid values: `ALL`, `ERROR`, or `NONE`."
+  type        = string
+  default     = "ALL"
+}
+variable "log_retention_days" {
+  description = "How many days to keep the AppSync logs in CloudWatch for."
+  type        = number
+  default     = 0
+}
+variable "logging_exclude_verbose_content" {
+  description = "Set to TRUE to exclude sections that contain information such as headers, context, and evaluated mapping templates, regardless of logging level."
+  type        = bool
+  default     = false
+}
 variable "datasources" {
   description = "A list of AppSync datasource resources (`aws_appsync_datasource` resource objects). This list must contain all datasource resources that are used by any functions in the `functions` input variable or any unit resolvers in the `unit_resolvers` input variable."
   type = list(object({
@@ -38,7 +62,6 @@ variable "datasources" {
   }))
   default = []
 }
-
 variable "functions" {
   description = "A map of key-map pairs of AppSync functions. The keys are only used for unique identification (e.g. a combination of datasource name and function name). The values are maps themselves."
   type = map(object({
@@ -71,48 +94,6 @@ variable "pipeline_resolvers" {
   }))
   default = {}
 }
-variable "openid_connect_config" {
-  description = "The OpenID configuration block."
-  type        = map(string)
-  default     = null
-}
-variable "user_pool_config" {
-  description = "The Cognito User Pool configuration block."
-  type        = map(string)
-  default     = null
-}
-variable "logging_level" {
-  description = "The logging level. Valid values: `ALL`, `ERROR`, or `NONE`."
-  type        = string
-  default     = "ALL"
-}
-variable "log_retention_days" {
-  description = "How many days to keep the AppSync logs in CloudWatch for."
-  type        = number
-  default     = 0
-}
-variable "logging_exclude_verbose_content" {
-  description = "Set to TRUE to exclude sections that contain information such as headers, context, and evaluated mapping templates, regardless of logging level."
-  type        = bool
-  default     = false
-}
-
-locals {
-  function_datasources = distinct([
-    for function in var.functions :
-    function.datasource_name
-  ])
-  unit_datasources = distinct([
-    for unit in var.unit_resolvers :
-    unit.datasource_name
-  ])
-  provided_datasource_map = {
-    for datasource in var.datasources :
-    datasource.name => datasource
-  }
-  datasource_names          = distinct(concat(local.function_datasources, local.unit_datasources))
-  provided_datasource_names = keys(local.provided_datasource_map)
-}
 
 // Assert that variables are correct
 module "assert_cognito_config" {
@@ -124,11 +105,4 @@ module "assert_openid_config" {
   source        = "../assert"
   error_message = "If `OPENID_CONNECT` is provided as an authentication type in the `authentication_types` variable, the `openid_connect_config` variable must also be provided."
   condition     = ! (contains(var.authentication_types, "OPENID_CONNECT") && var.openid_connect_config == null)
-}
-module "assert_datasources_exist" {
-  for_each      = toset(local.datasource_names)
-  depends_on    = [var.datasources]
-  source        = "../assert"
-  error_message = "Datasource `${each.value}` is referred to in a function or unit resolver, but was not provided in the `datasources` variable ([${join(", ", local.provided_datasource_names)}])."
-  condition     = contains(local.provided_datasource_names, each.value)
 }
