@@ -129,6 +129,11 @@ variable "reserved_concurrent_executions" {
   type    = number
   default = null
 }
+variable "layers" {
+  description = "Layers to use with this Lambda, in the same format that they would be accepted by the `aws_lambda_function` resource. Defaults to an empty list (`[]`)."
+  type        = list(string)
+  default     = []
+}
 
 
 locals {

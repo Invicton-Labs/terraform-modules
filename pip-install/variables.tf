@@ -20,7 +20,6 @@ variable "requirements_file" {
   default     = "requirements.txt"
 }
 
-
 variable "platform" {
   description = "The platform to install Pip packages for (same options as `pip install`'s `--platform` option). Defaults to `linux_x86_64`."
   type        = string

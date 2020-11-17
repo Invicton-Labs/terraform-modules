@@ -34,6 +34,7 @@ resource "aws_lambda_function" "function" {
   timeout                        = var.timeout
   publish                        = var.publish
   reserved_concurrent_executions = var.reserved_concurrent_executions
+  layers                         = var.layers
   // Only enclude the environment block if there are any environment vars provided
   dynamic "environment" {
     for_each = length(var.environment) > 0 ? [1] : []
