@@ -106,6 +106,10 @@ resource "aws_s3_bucket_object" "config" {
   content = jsonencode(merge(
     {
       route53_delegation_set_id = aws_route53_delegation_set.delegation.id
+      terraform_state_bucket_arns = {
+        primary   = module.s3-terraform-state.primary_bucket.arn
+        secondary = module.s3-terraform-state.secondary_bucket.arn
+      }
     },
     var.hosted_zone_domain == null ? {} : {
       hosted_zone_id = aws_route53_zone.zone[0].id
