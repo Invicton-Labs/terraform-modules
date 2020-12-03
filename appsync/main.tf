@@ -3,7 +3,7 @@ data "aws_region" "current" {}
 
 // Create a role that allows the AppSync API to do logging
 resource "aws_iam_role" "appsync_logging" {
-  name_prefix        = "AppSyncLogging"
+  name_prefix        = "AppSyncLogging-"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -22,7 +22,7 @@ EOF
 
 // Create a policy for linking to the AppSync logging role
 resource "aws_iam_role_policy" "appsync_logging" {
-  name_prefix = "AppSyncLogging"
+  name_prefix = "AppSyncLogging-"
   role        = aws_iam_role.appsync_logging.id
   policy      = <<EOF
 {
