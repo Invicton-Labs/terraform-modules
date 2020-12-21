@@ -51,10 +51,13 @@ resource "aws_appsync_graphql_api" "api" {
   schema              = var.schema
   tags                = var.tags
 
-  log_config {
-    cloudwatch_logs_role_arn = aws_iam_role.appsync_logging.arn
-    exclude_verbose_content  = var.logging_exclude_verbose_content
-    field_log_level          = var.logging_level
+  dynamic "log_config" {
+    for_each = var.logging_enabled ? [1] : []
+    content {
+      cloudwatch_logs_role_arn = aws_iam_role.appsync_logging.arn
+      exclude_verbose_content  = var.logging_exclude_verbose_content
+      field_log_level          = var.logging_level
+    }
   }
 
   // Only put the openid_connect_config block in the main block if OpenID is the first auth mechanism

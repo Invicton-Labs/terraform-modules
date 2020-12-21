@@ -37,6 +37,11 @@ variable "user_pool_config" {
   type        = map(string)
   default     = null
 }
+variable "logging_enabled" {
+  description = "Whether logging should be enabled."
+  type        = bool
+  default     = true
+}
 variable "logging_level" {
   description = "The logging level. Valid values: `ALL`, `ERROR`, or `NONE`."
   type        = string
@@ -99,10 +104,10 @@ variable "pipeline_resolvers" {
 module "assert_cognito_config" {
   source        = "../assert"
   error_message = "If `AMAZON_COGNITO_USER_POOLS` is provided as an authentication type in the `authentication_types` variable, the `user_pool_config` variable must also be provided."
-  condition     = ! (contains(var.authentication_types, "AMAZON_COGNITO_USER_POOLS") && var.user_pool_config == null)
+  condition     = !(contains(var.authentication_types, "AMAZON_COGNITO_USER_POOLS") && var.user_pool_config == null)
 }
 module "assert_openid_config" {
   source        = "../assert"
   error_message = "If `OPENID_CONNECT` is provided as an authentication type in the `authentication_types` variable, the `openid_connect_config` variable must also be provided."
-  condition     = ! (contains(var.authentication_types, "OPENID_CONNECT") && var.openid_connect_config == null)
+  condition     = !(contains(var.authentication_types, "OPENID_CONNECT") && var.openid_connect_config == null)
 }
