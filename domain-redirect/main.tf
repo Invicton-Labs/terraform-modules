@@ -97,7 +97,7 @@ resource "aws_cloudfront_distribution" "redirect" {
   enabled             = true
   is_ipv6_enabled     = true
   comment             = "CloudFront distribution for redirecting domains."
-  default_root_object = "index.html"
+  default_root_object = var.default_root_object
 
   // Configure the CloudFront logging to use the specified S3 bucket
   dynamic "logging_config" {

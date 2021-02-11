@@ -8,12 +8,12 @@ variable "domains_from" {
 }
 
 variable "domain_to" {
-  description = "The domain to redirect requests to, as well as its hosted zone."
+  description = "The domain to redirect requests to."
   type        = string
 }
 
 variable "domain_to_hosted_zone_id" {
-  description = "The Route53 hosted zone ID of the 'to' domain (the `domain_to` variable). If provided, the 'to' domain will be included in the distribution certificate. Only used if the `acm_certificate_arn` variable is provided."
+  description = "The Route53 hosted zone ID of the 'to' domain (the `domain_to` variable). If provided, the 'to' domain will be included in the distribution certificate. Only used if the `acm_certificate_arn` variable is not provided."
   type        = string
   default     = null
 }
@@ -26,6 +26,12 @@ variable "redirect_type" {
     condition     = contains(["KEEP_PATH", "REWRITE_PATH"], var.redirect_type)
     error_message = "The `redirect_type` variable must be either `KEEP_PATH` or `REWRITE_PATH`."
   }
+}
+
+variable "default_root_object" {
+  description = "The default root object to use for the CloudFront distribution."
+  type        = string
+  default     = null
 }
 
 variable "rewrite_path" {
