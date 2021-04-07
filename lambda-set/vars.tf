@@ -101,8 +101,8 @@ variable "environment" {
 }
 // The schedule to run this Lambda on (uses CloudWatch Events schedule notation). If not provided, the Lambda will not run on a schedule
 variable "schedules" {
-  type    = list(string)
-  default = []
+  type    = map(string)
+  default = {}
 }
 // ARN of the lambda function to subscribe logs to
 variable "logs_subscription_lambda_arn" {
