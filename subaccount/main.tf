@@ -1,3 +1,7 @@
+terraform {
+  experiments = [module_variable_optional_attrs]
+}
+
 resource "aws_organizations_account" "subaccount" {
   provider                   = aws
   name                       = var.name
@@ -119,4 +123,18 @@ resource "aws_s3_bucket_object" "config" {
   ))
   // Must add the content-type metadata so the body can be loaded by Terraform data resource
   content_type = "application/json"
+}
+
+// If desired, set an IAM account password policy
+resource "aws_iam_account_password_policy" "policy" {
+  count                          = var.iam_account_password_policy == null ? 0 : 1
+  allow_users_to_change_password = var.iam_account_password_policy.allow_users_to_change_password
+  hard_expiry                    = var.iam_account_password_policy.hard_expiry
+  max_password_age               = var.iam_account_password_policy.max_password_age
+  minimum_password_length        = var.iam_account_password_policy.minimum_password_length
+  password_reuse_prevention      = var.iam_account_password_policy.password_reuse_prevention
+  require_lowercase_characters   = var.iam_account_password_policy.require_lowercase_characters
+  require_numbers                = var.iam_account_password_policy.require_numbers
+  require_symbols                = var.iam_account_password_policy.require_symbols
+  require_uppercase_characters   = var.iam_account_password_policy.require_uppercase_characters
 }

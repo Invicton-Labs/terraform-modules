@@ -63,3 +63,18 @@ variable "config_map" {
     error_message = "The `config_map` variable must be a a map/object."
   }
 }
+variable "iam_account_password_policy" {
+  description = "The IAM user password policy for the subaccount. The arguments for this variable are the same as the arguments for the `aws_iam_account_password_policy` resource."
+  type = object({
+    allow_users_to_change_password = optional(bool)
+    hard_expiry                    = optional(bool)
+    max_password_age               = optional(number)
+    minimum_password_length        = optional(number)
+    password_reuse_prevention      = optional(number)
+    require_lowercase_characters   = optional(bool)
+    require_numbers                = optional(bool)
+    require_symbols                = optional(bool)
+    require_uppercase_characters   = optional(bool)
+  })
+  default = null
+}
