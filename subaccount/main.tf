@@ -59,21 +59,24 @@ resource "aws_dynamodb_table" "terraform-state-lock" {
 
 // Create a Terraform user
 resource "aws_iam_user" "terraform" {
+  count    = var.create_admin_iam_user ? 1 : 0
   provider = aws.subaccount
   name     = "Terraform"
 }
 
 // Attach the AWS built-in Admin policy
 resource "aws_iam_user_policy_attachment" "terraform" {
+  count      = var.create_admin_iam_user ? 1 : 0
   provider   = aws.subaccount
-  user       = aws_iam_user.terraform.name
+  user       = aws_iam_user.terraform[0].name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
 // Create an access key for this user
 resource "aws_iam_access_key" "terraform" {
+  count    = var.create_admin_iam_user ? 1 : 0
   provider = aws.subaccount
-  user     = aws_iam_user.terraform.name
+  user     = aws_iam_user.terraform[0].name
   pgp_key  = var.pgp_key
 }
 

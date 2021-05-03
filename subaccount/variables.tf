@@ -54,6 +54,11 @@ variable "hosted_zone_records" {
   }))
   default = {}
 }
+variable "create_admin_iam_user" {
+  description = "Whether to create an IAM admin user and access key."
+  type        = bool
+  default     = false
+}
 variable "config_map" {
   description = "An optional map of configuration values to store in the subaccount."
   type        = any

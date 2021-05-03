@@ -18,12 +18,12 @@ output "lock_table" {
   value       = aws_dynamodb_table.terraform-state-lock
 }
 output "iam_user" {
-  description = "An IAM user resource on the subaccount, with admin permissions."
-  value       = aws_iam_user.terraform
+  description = "An IAM user resource on the subaccount, with admin permissions (if the `create_admin_iam_user` variable was `true`)."
+  value       = var.create_admin_iam_user ? aws_iam_user.terraform[0] : null
 }
 output "iam_key" {
-  description = "An access key resource for the IAM admin user of the subaccount."
-  value       = aws_iam_access_key.terraform
+  description = "An access key resource for the IAM admin user of the subaccount (if the `create_admin_iam_user` variable was `true`)."
+  value       = var.create_admin_iam_user ? aws_iam_access_key.terraform[0] : null
 }
 output "delegation_set" {
   description = "A Route53 delegation set resource on the subaccount."
