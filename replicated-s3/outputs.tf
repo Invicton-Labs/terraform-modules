@@ -30,3 +30,16 @@ output "secondary_bucket_policy" {
   description = "The bucket policy resource attached to the secondary bucket. If the `secondary_bucket_policy` variable is not provided, this will be `null`."
   value       = var.secondary_bucket_policy != null ? aws_s3_bucket_policy.secondary[0] : null
 }
+output "complete" {
+  description = "A flag for determining when everything in this module has been created."
+  depends_on = [
+    aws_iam_role_policy.replication,
+    aws_s3_bucket.primary,
+    aws_s3_bucket.secondary,
+    aws_s3_bucket_policy.primary,
+    aws_s3_bucket_policy.secondary,
+    aws_s3_bucket_public_access_block.primary,
+    aws_s3_bucket_public_access_block.secondary,
+  ]
+  value = true
+}
