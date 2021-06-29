@@ -2,28 +2,25 @@ locals {
   shortened_role_name_prefix = length(var.name) <= 31 ? var.name : "${substr(var.name, 0, 15)}-${substr(var.name, length(var.name) - 15, 15)}"
 }
 
+data "aws_iam_policy_document" "lambda_role_trust" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type = "Service"
+      identifiers = concat([
+        "lambda.amazonaws.com"
+      ], var.edge ? ["edgelambda.amazonaws.com"] : [])
+    }
+  }
+}
+
 resource "aws_iam_role" "lambda_role" {
   count                 = var.iam_role_arn == null ? 1 : 0
   name_prefix           = "${local.shortened_role_name_prefix}-"
   path                  = "/lambda/"
   force_detach_policies = true
-  assume_role_policy    = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": [
-          ${var.edge ? "\"edgelambda.amazonaws.com\"," : ""}
-          "lambda.amazonaws.com"
-        ]
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-EOF
+  assume_role_policy    = data.aws_iam_policy_document.lambda_role_trust.json
 }
 
 data "aws_arn" "lambda_role" {
