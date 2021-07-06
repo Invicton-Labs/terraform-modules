@@ -108,29 +108,33 @@ data "aws_region" "primary" {
 data "aws_region" "secondary" {
   provider = aws.secondary
 }
-
 module "assert_different_regions" {
-  source        = "../assert"
+  source        = "Invicton-Labs/assertion/null"
+  version       = "0.1.1"
   error_message = "The 'primary' and 'secondary' providers must be in different regions."
   condition     = data.aws_region.primary.name != data.aws_region.secondary.name
 }
 module "assert_transition_valid" {
-  source        = "../assert"
+  source        = "Invicton-Labs/assertion/null"
+  version       = "0.1.1"
   error_message = "The 'transition_days' and 'transition_class' variables must both be null, or neither be null."
   condition     = (var.transition_days == null && var.transition_class == null) || (var.transition_days != null && var.transition_class != null)
 }
 module "assert_noncurrent_transition_valid" {
-  source        = "../assert"
+  source        = "Invicton-Labs/assertion/null"
+  version       = "0.1.1"
   error_message = "The 'noncurrent_version_transition_days' and 'noncurrent_version_transition_class' variables must both be null, or neither be null."
   condition     = (var.noncurrent_version_transition_days == null && var.noncurrent_version_transition_class == null) || (var.noncurrent_version_transition_days != null && var.noncurrent_version_transition_class != null)
 }
 module "assert_versioning_rules_days" {
-  source        = "../assert"
+  source        = "Invicton-Labs/assertion/null"
+  version       = "0.1.1"
   error_message = "Cannot set a value for the 'noncurrent_version_transition_days' variable if the 'versioning' variable is set to false."
   condition     = var.versioning == true || var.noncurrent_version_transition_days == null
 }
 module "assert_versioning_rules_class" {
-  source        = "../assert"
+  source        = "Invicton-Labs/assertion/null"
+  version       = "0.1.1"
   error_message = "Cannot set a value for the 'noncurrent_version_transition_class' variable if the 'versioning' variable is set to false."
   condition     = var.versioning == true || var.noncurrent_version_transition_class == null
 }
