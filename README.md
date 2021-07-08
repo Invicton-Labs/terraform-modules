@@ -10,5 +10,7 @@ If a module you were using is no longer present, try looking here:
 - [Log Group](https://registry.terraform.io/modules/Invicton-Labs/log-group/aws/latest)
 - [Lambda Set](https://registry.terraform.io/modules/Invicton-Labs/lambda-set/aws/latest)
 - [Validated ACM Certificate](https://registry.terraform.io/modules/Invicton-Labs/validated-acm-certificate/aws/latest)
+- [Command Exists](https://registry.terraform.io/modules/Invicton-Labs/command-exists/external/latest)
+- [Git Info](https://registry.terraform.io/modules/Invicton-Labs/git-info/external/latest)
 
 Other useful modules can be found on our page on the [Terraform Registry](https://registry.terraform.io/namespaces/Invicton-Labs).
