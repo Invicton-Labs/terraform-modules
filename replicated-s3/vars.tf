@@ -101,6 +101,16 @@ variable "public_access_block" {
   type        = bool
   default     = true
 }
+variable "primary_tags" {
+  description = "Tags to apply to the primary bucket."
+  type        = map(string)
+  default     = {}
+}
+variable "secondary_tags" {
+  description = "Tags to apply to the secondary bucket."
+  type        = map(string)
+  default     = {}
+}
 
 data "aws_region" "primary" {
   provider = aws.primary

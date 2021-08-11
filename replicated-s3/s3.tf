@@ -38,6 +38,7 @@ resource "aws_s3_bucket" "primary" {
   versioning {
     enabled = true
   }
+  tags = var.primary_tags
   // Add grants if any were specified
   dynamic "grant" {
     for_each = local.primary_grants_acl
@@ -63,7 +64,7 @@ resource "aws_s3_bucket" "primary" {
   dynamic "lifecycle_rule" {
     // If versioning isn't desired, but non-versioning isn't possible (due to replication),
     // add a rule to delete old versions as quickly as possible
-    for_each = ! var.versioning ? [1] : []
+    for_each = !var.versioning ? [1] : []
     content {
       enabled = true
       noncurrent_version_expiration {
@@ -130,6 +131,7 @@ resource "aws_s3_bucket" "secondary" {
   versioning {
     enabled = true
   }
+  tags = var.secondary_tags
   // Add grants if any were specified
   dynamic "grant" {
     for_each = local.secondary_grants_acl
@@ -155,7 +157,7 @@ resource "aws_s3_bucket" "secondary" {
   dynamic "lifecycle_rule" {
     // If versioning isn't desired, but non-versioning isn't possible (due to replication),
     // add a rule to delete old versions as quickly as possible
-    for_each = ! var.versioning ? [1] : []
+    for_each = !var.versioning ? [1] : []
     content {
       enabled = true
       noncurrent_version_expiration {
