@@ -101,6 +101,11 @@ variable "public_access_block" {
   type        = bool
   default     = true
 }
+variable "preferred_object_ownership" {
+  description = "The preferred object ownership for new objects in the buckets. Options are 'BucketOwnerPreferred' or 'ObjectWriter'."
+  type = string
+  default = "BucketOwnerPreferred"
+}
 variable "primary_tags" {
   description = "Tags to apply to the primary bucket."
   type        = map(string)

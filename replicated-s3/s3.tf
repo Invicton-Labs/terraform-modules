@@ -239,3 +239,18 @@ resource "aws_s3_bucket_public_access_block" "secondary" {
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
+
+resource "aws_s3_bucket_ownership_controls" "primary" {
+  provider = aws.primary
+  bucket   = aws_s3_bucket.primary.id
+  rule {
+    object_ownership = var.preferred_object_ownership
+  }
+}
+resource "aws_s3_bucket_ownership_controls" "secondary" {
+  provider = aws.secondary
+  bucket   = aws_s3_bucket.secondary.id
+  rule {
+    object_ownership = var.preferred_object_ownership
+  }
+}

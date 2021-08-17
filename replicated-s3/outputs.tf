@@ -40,6 +40,8 @@ output "complete" {
     aws_s3_bucket_policy.secondary,
     aws_s3_bucket_public_access_block.primary,
     aws_s3_bucket_public_access_block.secondary,
+    aws_s3_bucket_ownership_controls.primary,
+    aws_s3_bucket_ownership_controls.secondary,
   ]
   value = true
 }
