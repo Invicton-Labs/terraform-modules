@@ -8,6 +8,7 @@ If a module you were using is no longer present, try looking here:
 - [Botoform](https://registry.terraform.io/modules/Invicton-Labs/lambda-shell/aws/latest)
 - [Command Exists](https://registry.terraform.io/modules/Invicton-Labs/command-exists/external/latest)
 - [Deepmerge](https://registry.terraform.io/modules/Invicton-Labs/deepmerge/null/latest)
+- [Domain Redirect](https://registry.terraform.io/modules/Invicton-Labs/domain-redirect/aws/latest)
 - [Git Info](https://registry.terraform.io/modules/Invicton-Labs/git-info/external/latest)
 - [Init Config](https://registry.terraform.io/modules/Invicton-Labs/backend-config/aws/latest)
 - [Lambda Set](https://registry.terraform.io/modules/Invicton-Labs/lambda-set/aws/latest)
